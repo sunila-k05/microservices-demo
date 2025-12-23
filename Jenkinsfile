@@ -1,4 +1,4 @@
-kpipeline {
+pipeline {
     agent any
 
     options {
@@ -24,7 +24,6 @@ kpipeline {
         stage('Build Docker Image (BuildKit)') {
             steps {
                 sh '''
-                echo "Using Docker Buildx"
                 docker buildx create --use --name jenkins-builder || true
 
                 docker buildx build \
@@ -37,11 +36,13 @@ kpipeline {
 
         stage('Login to GHCR') {
             steps {
-                sh '''
-                echo "$GHCR_TOKEN" | docker login ghcr.io \
-                  -u sunila-k05 \
-                  --password-stdin
-                '''
+                withCredentials([string(credentialsId: 'GHCR_TOKEN', variable: 'TOKEN')]) {
+                    sh '''
+                    echo "$TOKEN" | docker login ghcr.io \
+                      -u sunila-k05 \
+                      --password-stdin
+                    '''
+                }
             }
         }
 
@@ -64,15 +65,14 @@ kpipeline {
     }
 
     post {
+        always {
+            sh 'docker buildx rm jenkins-builder || true'
+        }
         success {
             echo "✅ Pipeline completed successfully"
         }
         failure {
             echo "❌ Pipeline failed"
         }
-        always {
-            sh 'docker buildx rm jenkins-builder || true'
-        }
     }
 }
-
