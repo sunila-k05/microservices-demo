@@ -7,10 +7,9 @@ pipeline {
     }
 
     environment {
-        REGISTRY        = "ghcr.io/sunila-k05"
-        IMAGE_NAME      = "frontend"
-        IMAGE_TAG       = "latest"
-        DOCKER_BUILDKIT = "1"
+        REGISTRY   = "ghcr.io/sunila-k05"
+        IMAGE_NAME = "frontend"
+        IMAGE_TAG  = "latest"
     }
 
     stages {
@@ -21,15 +20,10 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image (BuildKit)') {
+        stage('Build Docker Image') {
             steps {
                 sh '''
-                docker buildx create --use --name jenkins-builder || true
-
-                docker buildx build \
-                  --platform linux/amd64 \
-                  -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG \
-                  src/frontend
+                docker build -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG src/frontend
                 '''
             }
         }
@@ -65,9 +59,6 @@ pipeline {
     }
 
     post {
-        always {
-            sh 'docker buildx rm jenkins-builder || true'
-        }
         success {
             echo "✅ Pipeline completed successfully"
         }
