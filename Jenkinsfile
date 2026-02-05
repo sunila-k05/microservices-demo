@@ -29,16 +29,20 @@ pipeline {
         }
 
         stage('Login to GHCR') {
-            steps {
-                withCredentials([string(credentialsId: 'GHCR_TOKEN', variable: 'TOKEN')]) {
-                    sh '''
-                    echo "$TOKEN" | docker login ghcr.io \
-                      -u sunila-k05 \
-                      --password-stdin
-                    '''
-                }
-            }
-        }
+  steps {
+    withCredentials([usernamePassword(
+      credentialsId: 'ghcr-creds',
+      usernameVariable: 'GITHUB_USER',
+      passwordVariable: 'GITHUB_TOKEN'
+    )]) {
+      sh '''
+        echo "$GITHUB_TOKEN" | docker login ghcr.io \
+          -u "$GITHUB_USER" --password-stdin
+      '''
+    }
+  }
+}
+
 
         stage('Push Image') {
             steps {
