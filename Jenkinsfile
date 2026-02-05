@@ -53,13 +53,14 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-    steps {
-        sh '''
-        export KUBECONFIG=/var/lib/jenkins/.kube/config
-        kubectl rollout restart deployment frontend
-        '''
-    }
+  steps {
+    sh '''
+      export KUBECONFIG=/var/lib/jenkins/.kube/config
+      kubectl rollout restart deployment frontend
+    '''
+  }
 }
+
 
 }
     post {
