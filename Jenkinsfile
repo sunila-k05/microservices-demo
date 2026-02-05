@@ -56,10 +56,16 @@ pipeline {
   steps {
     sh '''
       export KUBECONFIG=/var/lib/jenkins/.kube/config
-      kubectl rollout restart deployment frontend
+
+      # Apply manifests (creates frontend deployment if not exists)
+      kubectl apply -f kubernetes-manifests/
+
+      # Restart frontend to pull latest image
+      kubectl rollout restart deployment frontend || true
     '''
   }
 }
+
 
 
 }
