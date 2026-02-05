@@ -52,19 +52,21 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+ stage('Deploy to Kubernetes') {
   steps {
     sh '''
       export KUBECONFIG=/var/lib/jenkins/.kube/config
 
-      # Apply manifests (creates frontend deployment if not exists)
-      kubectl apply -f kubernetes-manifests/
+      # apply all yaml files EXCEPT kustomization.yaml
+      kubectl apply -f kubernetes-manifests/ --recursive \
+        --prune=false
 
-      # Restart frontend to pull latest image
+      # restart frontend
       kubectl rollout restart deployment frontend || true
     '''
   }
 }
+
 
 
 
