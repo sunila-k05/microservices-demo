@@ -28,10 +28,10 @@ pipeline {
             }
         }
 
-        stage('Login to GHCR') {
+    stage('Login to GHCR') {
   steps {
     withCredentials([usernamePassword(
-      credentialsId: 'ghcr-creds',
+      credentialsId: 'GHCR_TOKEN',
       usernameVariable: 'GITHUB_USER',
       passwordVariable: 'GITHUB_TOKEN'
     )]) {
