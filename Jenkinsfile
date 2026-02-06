@@ -52,20 +52,19 @@ pipeline {
             }
         }
 
- stage('Deploy to Kubernetes') {
+stage('Deploy to Kubernetes') {
   steps {
     sh '''
       export KUBECONFIG=/var/lib/jenkins/.kube/config
 
-      # apply all yaml files EXCEPT kustomization.yaml
-      kubectl apply -f kubernetes-manifests/ --recursive \
-        --prune=false
+      kubectl set image deployment/frontend \
+        frontend=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
 
-      # restart frontend
-      kubectl rollout restart deployment frontend || true
+      kubectl rollout status deployment/frontend
     '''
   }
 }
+
 
 
 
