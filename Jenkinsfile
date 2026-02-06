@@ -58,12 +58,13 @@ stage('Deploy to Kubernetes') {
       export KUBECONFIG=/var/lib/jenkins/.kube/config
 
       kubectl set image deployment/frontend \
-        frontend=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+        server=$REGISTRY/$IMAGE_NAME:$IMAGE_TAG
 
       kubectl rollout status deployment/frontend
     '''
   }
 }
+
 
 
 
